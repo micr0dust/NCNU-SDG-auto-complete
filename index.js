@@ -12,9 +12,9 @@ process.on('uncaughtException', function(err) {
 
 (async() => {
     const browser = await puppeteer.launch({
-        executablePath: "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-        headless: true,
-        devtools: true
+        executablePath: auth.browser(),
+        headless: false,
+        devtools: false
     });
     let correct = [{
         'question': '',
@@ -28,18 +28,20 @@ process.on('uncaughtException', function(err) {
     let allCorrectTimes = 0;
     let times = 0;
     const page = await browser.newPage();
+    console.log("登入暨大moodle...");
     await page.goto('https://moodle.ncnu.edu.tw/login/index.php');
     await page.waitForTimeout(1000);
     await page.type('#username', auth.user());
     await page.type('#password', auth.password());
     await page.click('#loginbtn');
     //while (!(await tryAnswerFn()));
+    console.log("登入成功");
     tryAnswerFn();
     //await page.screenshot({ path: 'mailbox.png' });
 
     async function tryAnswerFn() {
         await page.waitForTimeout(1000);
-        await page.goto('https://moodle.ncnu.edu.tw/mod/quiz/view.php?id=689272');
+        await page.goto(auth.target());
         await page.waitForSelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button');
         await page.evaluate(async() => {
             document.querySelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button').click();
@@ -161,7 +163,7 @@ process.on('uncaughtException', function(err) {
         if (res[2] === answering.length - 2) allCorrectTimes++;
         times++;
         answering = [];
-        console.log('(' + times + '/' + allCorrectTimes + ')');
+        console.log('全對率(' + allCorrectTimes + '/' + times + ')');
         if (allCorrectTimes > 20) await browser.close();
         return await tryAnswerFn();
     }
