@@ -24,6 +24,7 @@ process.on('uncaughtException', function(err) {
         'question': '',
         'answer': []
     }];
+
     let answering = [];
     let allCorrectTimes = 0;
     let times = 0;
@@ -36,8 +37,8 @@ process.on('uncaughtException', function(err) {
     await page.click('#loginbtn');
     //while (!(await tryAnswerFn()));
     console.log("登入成功");
-    tryAnswerFn();
     //await page.screenshot({ path: 'mailbox.png' });
+    tryAnswerFn();
 
     async function tryAnswerFn() {
         await page.waitForTimeout(1000);
@@ -48,7 +49,17 @@ process.on('uncaughtException', function(err) {
             if (document.querySelector('#id_submitbutton')) document.querySelector('#id_submitbutton').click();
         });
         await page.waitForNavigation();
-        for (let i = 1; await answerFn(i); i++);
+        while (true) {
+            let ender = await page.evaluate(() => {
+                return (document.querySelector("#mod_quiz-next-nav")) ? true : false;
+            });
+            if (!ender) break;
+            for (let i = 1; await answerFn(i); i++);
+            //await page.waitForTimeout(1000 * 86400);
+            //await page.waitForSelector('#mod_quiz-next-nav', { timeout: 1000 });
+            await page.click('#mod_quiz-next-nav');
+            await page.waitForNavigation();
+        }
 
         async function answerFn(num) {
             await page.waitForSelector('#responseform > div > div:nth-child(' + num + ')');
@@ -56,34 +67,73 @@ process.on('uncaughtException', function(err) {
                 const oquesNum = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.info > h3 > span');
                 if (!oquesNum) return false;
                 const otopic = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.content > div');
-                const oquestion = otopic.querySelector('div.qtext > p');
+                const oquestion1 = otopic.querySelector('div.qtext > p');
+                const oquestion2 = otopic.querySelector('div.qtext > p:nth-child(2)');
+                let oquestion;
                 let ooption;
-                //var
                 let answer_tmp;
                 //read
-                if (!oquestion) return false;
+                if (!oquestion1) return false;
+                oquestion = oquestion1.innerText;
+                if (oquestion2) oquestion = oquestion + oquestion2.innerText;
                 let reading = {
-                    'question': oquestion.innerText,
+                    'question': oquestion,
                     'answer': []
                 }
-                for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
-                    let odescribe = ooption.querySelector('div > div');
-                    reading.answer.push(odescribe.innerText);
-                }
+
+                if (otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer'))
+                    for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
+                        let odescribe = ooption.querySelector('div > div');
+                        reading.answer.push(odescribe.innerText);
+                        console.log("A");
+                    }
+                else if (otopic.querySelector('div > p > span:nth-child(1) > select'))
+                    for (let i = 1; ooption = await otopic.querySelector('div > p > span:nth-child(1) > select').options[i]; i++) {
+                        if (!ooption.text) continue;
+                        console.log(ooption.text);
+                        reading.answer.push(ooption.text);
+                        console.log("B");
+                    }
+                else if (otopic.querySelector('span'))
+                    for (let i = 0; ooption = await otopic.querySelectorAll('span > .selectable')[i]; i++) {
+                        if (!ooption || ooption.innerText == "...") continue;
+                        console.log(ooption.innerText);
+                        reading.answer.push(ooption.innerText);
+                        console.log("C");
+                    }
+
                 //skip wrongFn() if answer exist
                 if (!(answer_tmp = reading.answer[correctFn(reading)])) {
                     reading = wrongFn(reading);
                     answer_tmp = reading.answer[0];
                 }
+
                 //click
-                for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
-                    let odescribe = ooption.querySelector('div > div');
-                    let oradio = ooption.querySelector('input[type=radio]');
-                    if (answer_tmp === odescribe.innerText) {
-                        oradio.click();
-                        break;
+                if (otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer'))
+                    for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
+                        let odescribe = ooption.querySelector('div > div');
+                        let oradio = ooption.querySelector('input[type=radio]');
+                        if (answer_tmp === odescribe.innerText) {
+                            oradio.click();
+                            break;
+                        }
                     }
-                }
+                else if (otopic.querySelector('div > p > span:nth-child(1) > select'))
+                    for (let i = 1; ooption = await otopic.querySelector('div > p > span:nth-child(1) > select').options[i]; i++) {
+                        if (!ooption.text) continue;
+                        if (answer_tmp === ooption.text) {
+                            ooption.selected = true;
+                            break;
+                        }
+                    }
+                else if (otopic.querySelector('span'))
+                    for (let i = 0; ooption = await otopic.querySelectorAll('span > .selectable')[i]; i++) {
+                        if (!ooption || ooption.innerText == "...") continue;
+                        if (answer_tmp === ooption.innerText) {
+                            ooption.click();
+                            break;
+                        }
+                    }
 
                 function correctFn(arr) {
                     for (let i = 0; i < correct.length; i++) {
@@ -107,12 +157,10 @@ process.on('uncaughtException', function(err) {
                 //console.log(reading);
                 return [true, reading];
             }, num, correct, wrong);
-            answering.push(res[1]);
+            if (res[1]) answering.push(res[1]);
             //console.log(answering);
             return res[0];
         }
-        await page.click('#mod_quiz-next-nav');
-        await page.waitForNavigation();
         await page.waitForSelector('#region-main > div:nth-child(2) > div:nth-child(7) > div > div > form > button');
         await page.click('#region-main > div:nth-child(2) > div:nth-child(7) > div > div > form > button');
         await page.waitForSelector('#page-mod-quiz-summary > div.moodle-dialogue-base.moodle-dialogue-confirm > div.yui3-widget.yui3-panel.moodle-dialogue.yui3-widget-positioned.yui3-widget-modal.yui3-widget-stacked.moodle-has-zindex.moodle-dialogue-focused > div > div.moodle-dialogue-bd.yui3-widget-bd > div > div.confirmation-buttons.form-inline.justify-content-around > input.btn.btn-primary');
@@ -122,11 +170,17 @@ process.on('uncaughtException', function(err) {
             let ques;
             let arrLocation = false;
             let correct_count = 0;
+            let viewed = 0;
+            let answerlist = [];
             for (let i = 1; ques = document.querySelector('#quiznavbutton' + i); i++) {
-                if (ques.title === 'Viewed') continue;
-                else if (ques.title === 'Correct') {
+                let caze = i - 1;
+                if (ques.title === 'Viewed') {
+                    answerlist.push(caze + ':⚐');
+                    viewed++;
+                    continue;
+                } else if (ques.title === 'Correct' || ques.title === 'Partially correct') {
                     for (let j = 0; j < correct.length; j++) {
-                        if (correct[j] && correct[j].question && (correct[j].question === answering[i - 1].question)) {
+                        if (correct[j] && correct[j].question && (correct[j].question === answering[caze].question)) {
                             arrLocation = true;
                             break;
                         } else {
@@ -134,39 +188,54 @@ process.on('uncaughtException', function(err) {
                         }
                     }
                     if (!arrLocation) correct.push({
-                        'question': answering[i - 1].question,
-                        'answer': answering[i - 1].answer[0]
+                        'question': answering[caze].question,
+                        'answer': answering[caze].answer[0]
                     });
+                    answerlist.push(caze + ':✔');
+                    //answerlist.push(caze + ':✔' + answering[caze].answer[0].split(" ", 1));
                     correct_count++;
                 } else if (ques.title === 'Incorrect') {
                     for (let j = 0; j < wrong.length; j++) {
-                        if (wrong[j] && wrong[j].question && (wrong[j].question === answering[i - 1].question)) {
+                        if (wrong[j] && wrong[j].question && (wrong[j].question === answering[caze].question)) {
                             arrLocation = true;
-                            if (wrong[j].answer.indexOf(answering[i - 1].answer[0]) + 1);
+                            if (wrong[j].answer.indexOf(answering[caze].answer[0]) + 1);
                             else {
-                                wrong[j].answer.push(answering[i - 1].answer[0]);
+                                if (!(answering[caze].answer[0])) break;
+                                wrong[j].answer.push(answering[caze].answer[0]);
                             }
                             break;
                         }
                     }
                     if (!arrLocation) wrong.push({
-                        'question': answering[i - 1].question,
-                        'answer': [answering[i - 1].answer[0]]
+                        'question': answering[caze].question,
+                        'answer': [answering[caze].answer[0]]
                     });
+                    answerlist.push(caze + ':✘');
+                } else if (ques.title === 'Not answered') {
+                    answerlist.push(caze + ':☒');
                 }
             }
             console.log(answering, correct, wrong);
-            return [correct, wrong, correct_count];
+            return [correct, wrong, correct_count, viewed, answerlist];
         }, answering, correct, wrong);
         correct = res[0];
         wrong = res[1];
-        if (res[2] === answering.length - 2) allCorrectTimes++;
+        let viewed = res[3];
+        if (res[2] === answering.length - viewed) allCorrectTimes++;
         times++;
+        console.log('全對率(' + allCorrectTimes + '/' + times + ')[' + res[2] + '/' + (answering.length - viewed) + ']');
         answering = [];
-        console.log('全對率(' + allCorrectTimes + '/' + times + ')');
-        if (allCorrectTimes > 20) await browser.close();
+        console.log(JSON.stringify(res[4]));
+        if (allCorrectTimes > 1) {
+            fs.writeFileSync('./correct.json', JSON.stringify(correct));
+            fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
+            await browser.close();
+        }
+        if (times > 5) {
+            fs.writeFileSync('./correct.json', JSON.stringify(correct));
+            fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
+            //await page.waitForTimeout(1000 * 86400);
+        }
         return await tryAnswerFn();
     }
-    //await page.waitForTimeout();
-    //await browser.close();
 })();
