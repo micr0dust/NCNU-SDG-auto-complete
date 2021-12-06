@@ -85,21 +85,11 @@ process.on('uncaughtException', function(err) {
                     for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
                         let odescribe = ooption.querySelector('div > div');
                         reading.answer.push(odescribe.innerText);
-                        console.log("A");
-                    }
-                else if (otopic.querySelector('div > p > span:nth-child(1) > select'))
-                    for (let i = 1; ooption = await otopic.querySelector('div > p > span:nth-child(1) > select').options[i]; i++) {
-                        if (!ooption.text) continue;
-                        console.log(ooption.text);
-                        reading.answer.push(ooption.text);
-                        console.log("B");
                     }
                 else if (otopic.querySelector('span'))
                     for (let i = 0; ooption = await otopic.querySelectorAll('span > .selectable')[i]; i++) {
                         if (!ooption || ooption.innerText == "...") continue;
-                        console.log(ooption.innerText);
                         reading.answer.push(ooption.innerText);
-                        console.log("C");
                     }
 
                 //skip wrongFn() if answer exist
@@ -115,14 +105,6 @@ process.on('uncaughtException', function(err) {
                         let oradio = ooption.querySelector('input[type=radio]');
                         if (answer_tmp === odescribe.innerText) {
                             oradio.click();
-                            break;
-                        }
-                    }
-                else if (otopic.querySelector('div > p > span:nth-child(1) > select'))
-                    for (let i = 1; ooption = await otopic.querySelector('div > p > span:nth-child(1) > select').options[i]; i++) {
-                        if (!ooption.text) continue;
-                        if (answer_tmp === ooption.text) {
-                            ooption.selected = true;
                             break;
                         }
                     }
@@ -215,7 +197,7 @@ process.on('uncaughtException', function(err) {
                     answerlist.push(caze + ':☒');
                 }
             }
-            console.log(answering, correct, wrong);
+            //console.log(answering, correct, wrong);
             return [correct, wrong, correct_count, viewed, answerlist];
         }, answering, correct, wrong);
         correct = res[0];
@@ -226,12 +208,12 @@ process.on('uncaughtException', function(err) {
         console.log('全對率(' + allCorrectTimes + '/' + times + ')[' + res[2] + '/' + (answering.length - viewed) + ']');
         answering = [];
         console.log(JSON.stringify(res[4]));
-        if (allCorrectTimes > 1) {
+        if (allCorrectTimes > 0) {
             fs.writeFileSync('./correct.json', JSON.stringify(correct));
             fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
             await browser.close();
         }
-        if (times > 5) {
+        if (times > 10000) {
             fs.writeFileSync('./correct.json', JSON.stringify(correct));
             fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
             //await page.waitForTimeout(1000 * 86400);
