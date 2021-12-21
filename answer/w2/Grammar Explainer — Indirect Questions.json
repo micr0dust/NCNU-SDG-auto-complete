@@ -1,0 +1,58 @@
+[
+    { "question": "", "answer": "" },
+    {
+        "question": "Would you mind telling me _____ boy joined the soccer team?",
+        "answer": "which"
+    },
+    { "question": "Do you think _____?", "answer": "we have enough time to eat" },
+    {
+        "question": "Could you tell me _____.",
+        "answer": "if Ken has gone to America"
+    },
+    {
+        "question": "Do you think _____ she paid full price for her bag?",
+        "answer": "X"
+    },
+    {
+        "question": "Do you have any idea _____?",
+        "answer": "where Ray goes to school"
+    },
+    {
+        "question": "Do you think _____ ABC Company has a good business model?",
+        "answer": "X"
+    },
+    {
+        "question": "Do you remember _____ the students need to participate in this activity?",
+        "answer": "if"
+    },
+    {
+        "question": "Could you tell me _____ they like about this particular restaurant?",
+        "answer": "what"
+    },
+    {
+        "question": "Do you have any idea _____ they baked the cookies themselves?",
+        "answer": "if"
+    },
+    {
+        "question": "Do you remember _____ they bought their car?",
+        "answer": "where"
+    },
+    {
+        "question": "Do you remember _____?",
+        "answer": "if she has taken the course"
+    },
+    { "question": "Do you know _____ the meeting room is?", "answer": "where" },
+    {
+        "question": "Could you tell me _____?",
+        "answer": "when our English Class is"
+    },
+    {
+        "question": "Do you have any idea _____ brought us the chocolate?",
+        "answer": "who"
+    },
+    {
+        "question": "Could you tell me _____ I could borrow this computer for a while?",
+        "answer": "if"
+    },
+    { "question": "Do you know _____?", "answer": "what this word means" }
+]

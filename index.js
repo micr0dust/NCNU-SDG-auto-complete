@@ -13,7 +13,7 @@ process.on('uncaughtException', function(err) {
 (async() => {
     const browser = await puppeteer.launch({
         executablePath: auth.browser(),
-        headless: false,
+        headless: true,
         devtools: false
     });
     let correct = [{
@@ -48,7 +48,9 @@ process.on('uncaughtException', function(err) {
             document.querySelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button').click();
             if (document.querySelector('#id_submitbutton')) document.querySelector('#id_submitbutton').click();
         });
-        await page.waitForNavigation();
+        try {
+            await page.waitForNavigation();
+        } catch (error) {}
         while (true) {
             let ender = await page.evaluate(() => {
                 return (document.querySelector("#mod_quiz-next-nav")) ? true : false;
@@ -58,7 +60,9 @@ process.on('uncaughtException', function(err) {
             //await page.waitForTimeout(1000 * 86400);
             //await page.waitForSelector('#mod_quiz-next-nav', { timeout: 1000 });
             await page.click('#mod_quiz-next-nav');
-            await page.waitForNavigation();
+            try {
+                await page.waitForNavigation();
+            } catch (error) {}
         }
 
         async function answerFn(num) {
@@ -147,7 +151,10 @@ process.on('uncaughtException', function(err) {
         await page.click('#region-main > div:nth-child(2) > div:nth-child(7) > div > div > form > button');
         await page.waitForSelector('#page-mod-quiz-summary > div.moodle-dialogue-base.moodle-dialogue-confirm > div.yui3-widget.yui3-panel.moodle-dialogue.yui3-widget-positioned.yui3-widget-modal.yui3-widget-stacked.moodle-has-zindex.moodle-dialogue-focused > div > div.moodle-dialogue-bd.yui3-widget-bd > div > div.confirmation-buttons.form-inline.justify-content-around > input.btn.btn-primary');
         await page.click('#page-mod-quiz-summary > div.moodle-dialogue-base.moodle-dialogue-confirm > div.yui3-widget.yui3-panel.moodle-dialogue.yui3-widget-positioned.yui3-widget-modal.yui3-widget-stacked.moodle-has-zindex.moodle-dialogue-focused > div > div.moodle-dialogue-bd.yui3-widget-bd > div > div.confirmation-buttons.form-inline.justify-content-around > input.btn.btn-primary');
-        await page.waitForNavigation();
+        //await page.waitForTimeout(1000);
+        try {
+            await page.waitForNavigation();
+        } catch (error) {}
         const res = await page.evaluate(async(answering, correct, wrong) => {
             let ques;
             let arrLocation = false;
@@ -208,6 +215,8 @@ process.on('uncaughtException', function(err) {
         console.log('全對率(' + allCorrectTimes + '/' + times + ')[' + res[2] + '/' + (answering.length - viewed) + ']');
         answering = [];
         console.log(JSON.stringify(res[4]));
+        fs.writeFileSync('./correct.json', JSON.stringify(correct));
+        fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
         if (allCorrectTimes > 0) {
             fs.writeFileSync('./correct.json', JSON.stringify(correct));
             fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
