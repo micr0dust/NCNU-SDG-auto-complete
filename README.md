@@ -19,5 +19,5 @@
 - [Week12](/tree/main/1101/w12)
 - [Week13](/tree/main/1101/w13)
 - [Week14](/tree/main/1101/w14)
-- [Week14](/tree/main/1101/w15)
-- [Week14](/tree/main/1101/w16)
+- [Week15](/tree/main/1101/w15)
+- [Week16](/tree/main/1101/w16)
