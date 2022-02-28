@@ -13,16 +13,16 @@ process.on('uncaughtException', function(err) {
 (async() => {
     const browser = await puppeteer.launch({
         executablePath: auth.browser(),
-        headless: true,
+        headless: false,
         devtools: false
     });
     let correct = [{
-        'question': '',
-        'answer': ''
+        question: '',
+        answer: ''
     }];
     let wrong = [{
-        'question': '',
-        'answer': []
+        question: '',
+        answer: []
     }];
 
     let answering = [];
@@ -71,24 +71,23 @@ process.on('uncaughtException', function(err) {
                 const oquesNum = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.info > h3 > span');
                 if (!oquesNum) return false;
                 const otopic = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.content > div');
-                const oquestion1 = otopic.querySelector('div.qtext > p');
+                let oquestion1 = otopic.querySelector('div.qtext > p');
                 const oquestion2 = otopic.querySelector('div.qtext > p:nth-child(2)');
                 let oquestion;
                 let ooption;
                 let answer_tmp;
                 //read
+                if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div > p');
                 if (!oquestion1) return false;
                 oquestion = oquestion1.innerText;
                 if (oquestion2) oquestion = oquestion + oquestion2.innerText;
                 let reading = {
-                    'question': oquestion,
-                    'answer': []
+                    question: oquestion,
+                    answer: []
                 }
-
-                if (otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer'))
-                    for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
-                        let odescribe = ooption.querySelector('div > div');
-                        reading.answer.push(odescribe.innerText);
+                if (otopic.querySelector('div.ablock > div.answer'))
+                    for (let i = 1; ooption = await otopic.querySelector('div.ablock > div.answer > div:nth-child(' + i + ')'); i++) {
+                        reading.answer.push(ooption.innerText);
                     }
                 else if (otopic.querySelector('span'))
                     for (let i = 0; ooption = await otopic.querySelectorAll('span > .selectable')[i]; i++) {
@@ -103,11 +102,10 @@ process.on('uncaughtException', function(err) {
                 }
 
                 //click
-                if (otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer'))
-                    for (let i = 1; ooption = await otopic.querySelector('div.ablock.no-overflow.visual-scroll-x > div.answer > div:nth-child(' + i + ')'); i++) {
-                        let odescribe = ooption.querySelector('div > div');
+                if (otopic.querySelector('div.ablock > div.answer'))
+                    for (let i = 1; ooption = await otopic.querySelector('div.ablock > div.answer > div:nth-child(' + i + ')'); i++) {
                         let oradio = ooption.querySelector('input[type=radio]');
-                        if (answer_tmp === odescribe.innerText) {
+                        if (answer_tmp === ooption.innerText) {
                             oradio.click();
                             break;
                         }
@@ -145,12 +143,14 @@ process.on('uncaughtException', function(err) {
             }, num, correct, wrong);
             if (res[1]) answering.push(res[1]);
             //console.log(answering);
+            //await page.waitForTimeout(10000);
             return res[0];
         }
         await page.waitForSelector('#region-main > div:nth-child(2) > div:nth-child(7) > div > div > form > button');
         await page.click('#region-main > div:nth-child(2) > div:nth-child(7) > div > div > form > button');
         await page.waitForSelector('#page-mod-quiz-summary > div.moodle-dialogue-base.moodle-dialogue-confirm > div.yui3-widget.yui3-panel.moodle-dialogue.yui3-widget-positioned.yui3-widget-modal.yui3-widget-stacked.moodle-has-zindex.moodle-dialogue-focused > div > div.moodle-dialogue-bd.yui3-widget-bd > div > div.confirmation-buttons.form-inline.justify-content-around > input.btn.btn-primary');
         await page.click('#page-mod-quiz-summary > div.moodle-dialogue-base.moodle-dialogue-confirm > div.yui3-widget.yui3-panel.moodle-dialogue.yui3-widget-positioned.yui3-widget-modal.yui3-widget-stacked.moodle-has-zindex.moodle-dialogue-focused > div > div.moodle-dialogue-bd.yui3-widget-bd > div > div.confirmation-buttons.form-inline.justify-content-around > input.btn.btn-primary');
+        //console.log(answering);
         //await page.waitForTimeout(1000);
         try {
             await page.waitForNavigation();
@@ -163,6 +163,7 @@ process.on('uncaughtException', function(err) {
             let answerlist = [];
             for (let i = 1; ques = document.querySelector('#quiznavbutton' + i); i++) {
                 let caze = i - 1;
+                console.log(answering, answering[caze]);
                 if (ques.title === 'Viewed') {
                     answerlist.push(caze + ':⚐');
                     viewed++;
@@ -177,8 +178,8 @@ process.on('uncaughtException', function(err) {
                         }
                     }
                     if (!arrLocation) correct.push({
-                        'question': answering[caze].question,
-                        'answer': answering[caze].answer[0]
+                        question: answering[caze].question,
+                        answer: answering[caze].answer[0]
                     });
                     answerlist.push(caze + ':✔');
                     //answerlist.push(caze + ':✔' + answering[caze].answer[0].split(" ", 1));
@@ -196,8 +197,8 @@ process.on('uncaughtException', function(err) {
                         }
                     }
                     if (!arrLocation) wrong.push({
-                        'question': answering[caze].question,
-                        'answer': [answering[caze].answer[0]]
+                        question: answering[caze].question,
+                        answer: [answering[caze].answer[0]]
                     });
                     answerlist.push(caze + ':✘');
                 } else if (ques.title === 'Not answered') {
