@@ -1,5 +1,5 @@
-const puppeteer = require('puppeteer-core');
-const auth = require('./js/auth');
+const puppeteer = require('puppeteer');
+//const auth = require('./js/auth');
 const fs = require('fs');
 const util = require('util');
 const { resolve } = require('path');
@@ -10,12 +10,13 @@ process.on('uncaughtException', function(err) {
     log_file_err.write(util.format('Caught exception: ' + err) + '\n');
 });
 
-(async() => {
-    const browser = await puppeteer.launch({
-        executablePath: auth.browser(),
-        headless: true,
-        devtools: false
-    });
+module.exports = async function bot(user, password, target) {
+    // const browser = await puppeteer.launch({
+    //     executablePath: auth.browser(),
+    //     headless: true,
+    //     devtools: false
+    // });
+    const browser = await puppeteer.launch();
     let correct = [{
         question: '',
         answer: ''
@@ -32,8 +33,8 @@ process.on('uncaughtException', function(err) {
     console.log("登入暨大moodle...");
     await page.goto('https://moodle.ncnu.edu.tw/login/index.php');
     await page.waitForTimeout(1000);
-    await page.type('#username', auth.user());
-    await page.type('#password', auth.password());
+    await page.type('#username', user);
+    await page.type('#password', password);
     await page.click('#loginbtn');
     //while (!(await tryAnswerFn()));
     console.log("登入成功");
@@ -42,7 +43,7 @@ process.on('uncaughtException', function(err) {
 
     async function tryAnswerFn() {
         await page.waitForTimeout(1000);
-        await page.goto(auth.target());
+        await page.goto(target);
         await page.waitForSelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button');
         await page.evaluate(async() => {
             document.querySelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button').click();
@@ -247,4 +248,4 @@ process.on('uncaughtException', function(err) {
         }
         return await tryAnswerFn();
     }
-})();
+};
