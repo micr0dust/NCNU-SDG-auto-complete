@@ -13,7 +13,7 @@ process.on('uncaughtException', function(err) {
 (async() => {
     const browser = await puppeteer.launch({
         executablePath: auth.browser(),
-        headless: false,
+        headless: true,
         devtools: false
     });
     let correct = [{
@@ -57,6 +57,8 @@ process.on('uncaughtException', function(err) {
             });
             if (!ender) break;
             for (let i = 1; await answerFn(i); i++);
+
+            await page.waitForTimeout(1000 * 7);
             //await page.waitForTimeout(1000 * 86400);
             //await page.waitForSelector('#mod_quiz-next-nav', { timeout: 1000 });
             await page.click('#mod_quiz-next-nav');
@@ -72,20 +74,26 @@ process.on('uncaughtException', function(err) {
                 if (!oquesNum) return false;
                 const otopic = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.content > div');
                 let oquestion1 = otopic.querySelector('div.qtext > p');
-                const oquestion2 = otopic.querySelector('div.qtext > p:nth-child(2)');
                 let oquestion;
                 let ooption;
                 let answer_tmp;
                 //read
                 if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div > p');
+                if (!oquestion1) oquestion1 = otopic.querySelector('p').childNodes[0];
                 if (!oquestion1) return false;
-                oquestion = oquestion1.innerText;
-                if (oquestion2) oquestion = oquestion + oquestion2.innerText;
+                oquestion = oquestion1.textContent.trim();
+                const oquestion2 = otopic.querySelector('p').childNodes[2];
+                if (oquestion2) oquestion = oquestion + "___" + oquestion2.textContent.trim();
                 let reading = {
                     question: oquestion,
                     answer: []
                 }
-                if (otopic.querySelector('div.ablock > div.answer'))
+                if (otopic.querySelector('span > .select'))
+                    for (let i = 0; ooption = await otopic.querySelectorAll('span > .select > option')[i]; i++) {
+                        if (!ooption || isNaN(parseInt(ooption.value, 10))) continue;
+                        reading.answer.push(ooption.innerText);
+                    }
+                else if (otopic.querySelector('div.ablock > div.answer'))
                     for (let i = 1; ooption = await otopic.querySelector('div.ablock > div.answer > div:nth-child(' + i + ')'); i++) {
                         reading.answer.push(ooption.innerText);
                     }
@@ -102,7 +110,16 @@ process.on('uncaughtException', function(err) {
                 }
 
                 //click
-                if (otopic.querySelector('div.ablock > div.answer'))
+                if (otopic.querySelector('span > .select'))
+                    for (let i = 0; ooption = await otopic.querySelectorAll('span > .select > option')[i]; i++) {
+                        if (!ooption || isNaN(parseInt(ooption.value, 10))) continue;
+                        console.log(answer_tmp, ooption.innerText, answer_tmp === ooption.innerText)
+                        if (answer_tmp === ooption.innerText) {
+                            ooption.selected = true;
+                            break;
+                        }
+                    }
+                else if (otopic.querySelector('div.ablock > div.answer'))
                     for (let i = 1; ooption = await otopic.querySelector('div.ablock > div.answer > div:nth-child(' + i + ')'); i++) {
                         let oradio = ooption.querySelector('input[type=radio]');
                         if (answer_tmp === ooption.innerText) {
@@ -143,7 +160,7 @@ process.on('uncaughtException', function(err) {
             }, num, correct, wrong);
             if (res[1]) answering.push(res[1]);
             //console.log(answering);
-            //await page.waitForTimeout(10000);
+
             return res[0];
         }
         await page.waitForSelector('#region-main > div:nth-child(2) > div:nth-child(7) > div > div > form > button');
