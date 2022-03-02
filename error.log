@@ -1,0 +1,5 @@
+Caught exception: TypeError: res.render is not a function
+Caught exception: TypeError: res.sendFile is not a function
+Caught exception: TypeError: app.get is not a function
+Caught exception: TypeError: app.get is not a function
+Caught exception: ReferenceError: req is not defined
