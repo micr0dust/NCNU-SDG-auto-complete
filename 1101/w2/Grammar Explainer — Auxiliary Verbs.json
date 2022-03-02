@@ -1,0 +1,52 @@
+[
+    { "question": "", "answer": "" },
+    {
+        "question": "How much money _____ you spend on food every month?",
+        "answer": "do"
+    },
+    { "question": "Why _____ you leave your last job?", "answer": "did" },
+    { "question": "Who _____ owns this red car?", "answer": "X" },
+    { "question": "What _____ he buy yesterday?", "answer": "did" },
+    {
+        "question": "What kind of food _____ she order for her birthday party?",
+        "answer": "did"
+    },
+    {
+        "question": "Who _____ they talk to on the phone last night?",
+        "answer": "did"
+    },
+    { "question": "Where _____ you buy bubble tea in Calgary?", "answer": "can" },
+    {
+        "question": "How many customers _____ asked for a refund for this particular product?",
+        "answer": "X"
+    },
+    {
+        "question": "What _____ happened to Cindy’s dog at the night market?",
+        "answer": "X"
+    },
+    { "question": "What time _____ the library close?", "answer": "does" },
+    { "question": "Who _____ came to the party last night?", "answer": "X" },
+    {
+        "question": "Why _____ they cancel the dental appointment last week?",
+        "answer": "did"
+    },
+    { "question": "What _____ made you happy?", "answer": "X" },
+    { "question": "Which textbook _____ belongs to your sister?", "answer": "X" },
+    { "question": "When _____ they visit you last month?", "answer": "did" },
+    {
+        "question": "Which student _____ came to class on time every week?",
+        "answer": "X"
+    },
+    {
+        "question": "Who _____ we need to talk to for returning the microwave?",
+        "answer": "do"
+    },
+    {
+        "question": "How _____ they improve their English with one month?",
+        "answer": "did"
+    },
+    {
+        "question": "How much _____ it cost to repair the broken window?",
+        "answer": "will"
+    }
+]

@@ -1,0 +1,47 @@
+[
+    { "question": "", "answer": "" },
+    { "question": "I haven’t been seeing you for 3 months.", "answer": "False" },
+    {
+        "question": "She has taken her temperature this morning.",
+        "answer": "True"
+    },
+    {
+        "question": "How many English classes _____ so far?",
+        "answer": "have you skipped"
+    },
+    {
+        "question": "How many times _____ Disneyland?",
+        "answer": "have you visited"
+    },
+    {
+        "question": "Tom has had an allergic reaction to something in the food.",
+        "answer": "True"
+    },
+    { "question": "We have run out of brown sugar.", "answer": "True" },
+    {
+        "question": "They have been owning their car for five years.",
+        "answer": "False"
+    },
+    { "question": "How long have you _____ your computer?", "answer": "had" },
+    { "question": "You have eaten too much.", "answer": "True" },
+    { "question": "Have you been taking your medicine?", "answer": "True" },
+    {
+        "question": "She _____ about her toothache for two weeks.",
+        "answer": "has been complaining"
+    },
+    {
+        "question": "His mother _____ care of him since last week, and he is much better now.",
+        "answer": "has been taking"
+    },
+    { "question": "You haven’t feeling well lately.", "answer": "False" },
+    { "question": "He has been knowing me for a long time.", "answer": "False" },
+    { "question": "I have been meeting her last year.", "answer": "False" },
+    {
+        "question": "She _____ a lot of water since this morning.",
+        "answer": "has been drinking"
+    },
+    {
+        "question": "I bought that magazine at Costco last week, but I _____ it yet.",
+        "answer": "haven’t read"
+    }
+]
