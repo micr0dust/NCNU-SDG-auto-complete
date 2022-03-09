@@ -4,7 +4,7 @@ echo /================================\
 echo \ made by Microdust              /
 echo /                                \
 echo \                                /
-echo / 輸入目標id，即可執行程式     \
+echo / 輸入目標id，即可執行程式       \
 echo \================================/
 echo.
 echo.

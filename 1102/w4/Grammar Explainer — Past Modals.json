@@ -1,0 +1,43 @@
+[
+    { "question": "", "answer": "" },
+    {
+        "question": "You won't be able see without your glasses.",
+        "answer": "I should have brought them with me."
+    },
+    {
+        "question": "She's pretty sure that she wants to go to Japan this summer.",
+        "answer": "She might want to pick a different place."
+    },
+    {
+        "question": "John told me that our class starts at eight o'clock in the morning tomorrow.",
+        "answer": "That must be a mistake!"
+    },
+    {
+        "question": "Alex just bought a brand new iPhone.",
+        "answer": "He must have found a way to pay for it."
+    },
+    {
+        "question": "My phone has been missing for two days.",
+        "answer": "You might have left it in the library."
+    },
+    {
+        "question": "Hannah can't find her keys.",
+        "answer": "She may have left them in her purse."
+    },
+    {
+        "question": "Alice might have been looking for you.",
+        "answer": "I should have given her my phone number."
+    },
+    {
+        "question": "Someone dropped their wallet.",
+        "answer": "You should open it and see if there is any ID inside."
+    },
+    {
+        "question": "I'm not sure where the dog went.",
+        "answer": "It must have gone to the neighbor's house."
+    },
+    {
+        "question": "Your cat looks really scared.",
+        "answer": "She might be afraid of you."
+    }
+]

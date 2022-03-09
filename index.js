@@ -77,13 +77,14 @@ process.on('uncaughtException', function(err) {
                 let oquestion;
                 let ooption;
                 let answer_tmp;
-                //read
+                //read #responseform > div > div:nth-child(2) > div.content > div > div.qtext > h3
                 if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div > p');
+                if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > h3 > strong');
                 if (!oquestion1) oquestion1 = otopic.querySelector('p').childNodes[0];
                 if (!oquestion1) return false;
                 oquestion = oquestion1.textContent.trim();
-                const oquestion2 = otopic.querySelector('p').childNodes[2];
-                if (oquestion2) oquestion = oquestion + "___" + oquestion2.textContent.trim();
+                const oquestion2 = otopic.querySelector('p');
+                if (oquestion2 && oquestion2.childNodes[2]) oquestion = oquestion + "___" + oquestion2.childNodes[2].textContent.trim();
                 let reading = {
                     question: oquestion,
                     answer: []
