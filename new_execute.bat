@@ -4,17 +4,17 @@ echo /================================\
 echo \ made by Microdust              /
 echo /                                \
 echo \                                /
-echo / 輸入目標id，即可執行程式     \
+echo / 輸入學號、密碼和目標網址       \
 echo \================================/
 echo.
 echo.
 cd .\
-@REM set /P id=學號: 
-@REM set /P password=密碼: 
-set /P url=水沙連英文id: 
+set /P id=學號: 
+set /P password=密碼: 
+set /P url=水沙連英文網址: 
 del ".env"
-echo USER = 110321051 >> .env
-echo PASSWORD = M1cr06uzt >> .env
-echo TARGET = https://moodle.ncnu.edu.tw/mod/quiz/view.php?id=%url% >> .env
+echo USER = %id% > .env
+echo PASSWORD = %password% >> .env
+echo TARGET = %url% >> .env
 echo BROWSER = C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe >> .env
 yarn run start
