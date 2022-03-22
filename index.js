@@ -58,7 +58,7 @@ process.on('uncaughtException', function(err) {
             if (!ender) break;
             for (let i = 1; await answerFn(i); i++);
 
-            await page.waitForTimeout(1000 * 7);
+            //await page.waitForTimeout(1000);
             //await page.waitForTimeout(1000 * 86400);
             //await page.waitForSelector('#mod_quiz-next-nav', { timeout: 1000 });
             await page.click('#mod_quiz-next-nav');
@@ -80,7 +80,9 @@ process.on('uncaughtException', function(err) {
                 //read #responseform > div > div:nth-child(2) > div.content > div > div.qtext > h3
                 if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div > p');
                 if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > h3 > strong');
-                if (!oquestion1) oquestion1 = otopic.querySelector('p').childNodes[0];
+                if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div');
+                if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext');
+                if (!oquestion1 && otopic.querySelector('p')) oquestion1 = otopic.querySelector('p').childNodes[0];
                 if (!oquestion1) return false;
                 oquestion = oquestion1.textContent.trim();
                 const oquestion2 = otopic.querySelector('p');
