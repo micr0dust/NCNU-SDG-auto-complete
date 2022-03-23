@@ -1,4 +1,8 @@
 .env
 node_modules
+chromium
 correct.json
 wrong.json
+index-linux
+index-macos
+index.exe

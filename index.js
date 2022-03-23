@@ -1,21 +1,49 @@
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 const auth = require('./js/auth');
 const fs = require('fs');
 const util = require('util');
+const readline = require('readline');
 const { resolve } = require('path');
 const { rejects } = require('assert');
-var log_file_err = fs.createWriteStream(__dirname + '/error.log', { flags: 'a' });
-process.on('uncaughtException', function(err) {
-    console.log('Caught exception: ' + err);
-    log_file_err.write(util.format('Caught exception: ' + err) + '\n');
+// var log_file_err = fs.createWriteStream(__dirname + '/error.log', { flags: 'a' });
+// process.on('uncaughtException', function(err) {
+//     console.log('Caught exception: ' + err);
+//     log_file_err.write(util.format('Caught exception: ' + err) + '\n');
+// });
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
 });
+
+function getInput(question) {
+    return new Promise((resolve) => {
+        rl.question(question, (answer) => {
+            resolve(answer);
+        });
+    });
+}
 
 (async() => {
     const browser = await puppeteer.launch({
-        executablePath: auth.browser(),
+        executablePath: './chromium/chrome.exe',
         headless: true,
         devtools: false
     });
+    //pkg index.js -t node14-win-x64 --public
+    console.log("\n");
+    console.log(" /$$$$$$$   /$$$$$$$ /$$$$$$$  /$$   /$$");
+    console.log("| $$__  $$ /$$_____/| $$__  $$| $$  | $$");
+    console.log("| $$  \\ $$| $$      | $$  \\ $$| $$  | $$");
+    console.log("| $$  | $$| $$      | $$  | $$| $$  | $$");
+    console.log("| $$  | $$|  $$$$$$$| $$  | $$|  $$$$$$/");
+    console.log("|__/  |__/ \\_______/|__/  |__/ \\______/ ");
+    console.log("\n水沙連語言學習網自動作答程式");
+    console.log("                      -Made by Microdust\n\n");
+
+    const USER = await getInput('學號：');
+    const PASSWORD = await getInput('Moodle密碼：');
+    const TARGET = await getInput('目標網址：');
     let correct = [{
         question: '',
         answer: ''
@@ -29,25 +57,42 @@ process.on('uncaughtException', function(err) {
     let allCorrectTimes = 0;
     let times = 0;
     const page = await browser.newPage();
-    console.log("登入暨大moodle...");
+    console.log("\n\n");
+    console.log("||************************************************************");
+    console.log("||");
+    console.log("||  ⚐非作答文章   ✔答對   ✘答錯   ☒未作答(不支援該題型)");
+    console.log("||");
+    console.log("||************************************************************\n");
+    console.log("\n嘗試登入暨大 Moodle...");
     await page.goto('https://moodle.ncnu.edu.tw/login/index.php');
     await page.waitForTimeout(1000);
-    await page.type('#username', auth.user());
-    await page.type('#password', auth.password());
+    await page.type('#username', USER);
+    await page.type('#password', PASSWORD);
     await page.click('#loginbtn');
     //while (!(await tryAnswerFn()));
-    console.log("登入成功");
-    //await page.screenshot({ path: 'mailbox.png' });
+    console.log("\n\n");
     tryAnswerFn();
+    //await page.screenshot({ path: 'mailbox.png' });
 
     async function tryAnswerFn() {
         await page.waitForTimeout(1000);
-        await page.goto(auth.target());
-        await page.waitForSelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button');
-        await page.evaluate(async() => {
-            document.querySelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button').click();
-            if (document.querySelector('#id_submitbutton')) document.querySelector('#id_submitbutton').click();
-        });
+        try {
+            await page.goto(TARGET);
+        } catch (error) {
+            console.log("連線失敗，可能是網址錯誤\n");
+            console.log(error);
+        }
+        try {
+            await page.waitForSelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button');
+            await page.evaluate(async() => {
+                document.querySelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button').click();
+                if (document.querySelector('#id_submitbutton')) document.querySelector('#id_submitbutton').click();
+            });
+        } catch (error) {
+            console.log("登入失敗，可能是帳號密碼錯誤\n");
+            console.log(error);
+        }
+
         try {
             await page.waitForNavigation();
         } catch (error) {}
@@ -242,6 +287,14 @@ process.on('uncaughtException', function(err) {
             fs.writeFileSync('./correct.json', JSON.stringify(correct));
             fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
             await browser.close();
+            console.log("\n\n||**********************************************************************************************");
+            console.log("||");
+            console.log("||    程式執行結束，你可以去 " + TARGET + " 察看真實結果");
+            console.log("||");
+            console.log("||    已將答案輸出成 correct.json、錯誤題目輸出成 wrong.json，可以至資料夾中查看");
+            console.log("||");
+            console.log("||**********************************************************************************************");
+            await page.waitForTimeout(1000 * 86400);
         }
         if (times > 10000) {
             fs.writeFileSync('./correct.json', JSON.stringify(correct));
