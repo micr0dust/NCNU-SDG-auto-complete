@@ -1,6 +1,6 @@
 # 水沙連語言學習網自動作答程式
 
-[![下載](https://github.com/micr0dust/image_saves/raw/master/img/button/btn-dl-black-ch.png?raw=true "下載")](https://github.com/micr0dust/NCNU-SDG-auto-complete/releases/download/v2.0/NCNU-SDG-auto-complete.zip)
+[![下載](https://github.com/micr0dust/image_saves/raw/master/img/button/btn-dl-black-ch.png?raw=true "下載")](https://github.com/micr0dust/NCNU-SDG-auto-complete/releases/download/v2.1.0/NCNU-SDG-auto-complete.zip)
 
 ## 如何使用
 
@@ -8,6 +8,11 @@
 2. 解壓縮
 3. 雙擊 index.exe 啟動程式
 4. 按程式提示輸入相應資料即可開始自動作答
+
+## 常見問題
+
+- 如果無法使用，請確認是否為最新版本。
+- 如果已經為最新版本仍出現異常，可能是 Moodle 有更新，我還沒更新。
 
 ## 免責聲明
 
