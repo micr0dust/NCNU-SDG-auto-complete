@@ -5,6 +5,7 @@
     "main": "index.js",
     "license": "MIT",
     "dependencies": {
+        "check-update-github": "^0.0.4",
         "puppeteer": "^13.5.1"
     },
     "scripts": {
