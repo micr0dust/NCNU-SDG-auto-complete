@@ -78,8 +78,8 @@ checkUpdate({
         console.log("                      -Made by Microdust\n\n");
 
         const USER = await getInput('學號：');
-        const PASSWORD = await getInput('Moodle密碼：');
-        const TARGET = await getInput('目標網址：');
+        const PASSWORD = await getInput('\x1b[0mMoodle密碼：\x1b[30m');
+        const TARGET = await getInput('\x1b[0m目標網址：');
         let correct = [{
             question: '',
             answer: ''
