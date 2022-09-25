@@ -268,7 +268,7 @@ checkUpdate({
                     let caze = i - 1;
                     console.log(answering, answering[caze]);
                     if (ques.title === 'Viewed') {
-                        answerlist.push('\x1b[47m' + caze + '\x1b[0m\x1b[36m⚐\x1b[0m');
+                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[36m ⚐ \x1b[0m| ');
                         viewed++;
                         continue;
                     } else if (ques.title === 'Correct' || ques.title === 'Partially correct') {
@@ -284,7 +284,7 @@ checkUpdate({
                             question: answering[caze].question,
                             answer: answering[caze].answer[0]
                         });
-                        answerlist.push('\x1b[47m' + caze + '\x1b[0m\x1b[32m✔\x1b[0m');
+                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[32m ✔ \x1b[0m| ');
                         //answerlist.push(caze + ':✔' + answering[caze].answer[0].split(" ", 1));
                         correct_count++;
                     } else if (ques.title === 'Incorrect') {
@@ -303,9 +303,9 @@ checkUpdate({
                             question: answering[caze].question,
                             answer: [answering[caze].answer[0]]
                         });
-                        answerlist.push('\x1b[47m' + caze + '\x1b[0m\x1b[31m✘\x1b[0m');
+                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[31m ✘ \x1b[0m| ');
                     } else if (ques.title === 'Not answered') {
-                        answerlist.push('\x1b[47m' + caze + '\x1b[0m\x1b[35m☒\x1b[0m');
+                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[35m ☒ \x1b[0m| ');
                     }
                 }
                 //console.log(answering, correct, wrong);
@@ -318,7 +318,11 @@ checkUpdate({
             times++;
             console.log('全對率(' + allCorrectTimes + '/' + times + ')[' + res[2] + '/' + (answering.length - viewed) + ']');
             answering = [];
-            console.log(JSON.stringify(res[4]));
+            let output = "";
+            res[4].forEach(result => {
+                output += result;
+            });
+            console.log(output);
             fs.writeFileSync('./correct.json', JSON.stringify(correct));
             fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
             if (allCorrectTimes > 0) {
