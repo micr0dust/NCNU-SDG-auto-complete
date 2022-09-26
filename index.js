@@ -307,7 +307,7 @@ checkUpdate({
                             question: answering[caze].question,
                             answer: answering[caze].answer[0]
                         });
-                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[32m ✔ \x1b[0m|');
+                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[32m ✔\x1b[0m| ');
                         //answerlist.push(caze + ':✔' + answering[caze].answer[0].split(" ", 1));
                         correct_count++;
                     } else if (ques.title === 'Incorrect') {
