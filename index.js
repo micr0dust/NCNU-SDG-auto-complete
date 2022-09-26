@@ -162,6 +162,7 @@ checkUpdate({
                     if (!oquesNum) return false;
                     const otopic = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.content > div');
                     let oquestion1 = otopic.querySelector('div.qtext > p');
+                    const listen = otopic.querySelector('div > div > div > audio');
                     let oquestion;
                     let ooption;
                     let answer_tmp;
@@ -175,6 +176,7 @@ checkUpdate({
                     oquestion = oquestion1.textContent.trim();
                     const oquestion2 = otopic.querySelector('p');
                     if (oquestion2 && oquestion2.childNodes[2]) oquestion = oquestion + "___" + oquestion2.childNodes[2].textContent.trim();
+                    if (listen) oquestion = listen.title;
                     let reading = {
                         question: oquestion,
                         answer: []
@@ -189,6 +191,11 @@ checkUpdate({
                         for (let i = 1; ooption = await otopic.querySelector('div.ablock > div.answer > div:nth-child(' + i + ')'); i++) {
                             const check = await ooption.querySelector('div > span');
                             if (check) check.remove();
+                            reading.answer.push(ooption.innerText);
+                        }
+                    else if (otopic.querySelector('span'))
+                        for (let i = 0; ooption = await otopic.querySelectorAll('span > .selectable')[i]; i++) {
+                            if (!ooption || ooption.innerText == "...") continue;
                             reading.answer.push(ooption.innerText);
                         }
                     else if (otopic.querySelector('span'))
@@ -218,6 +225,14 @@ checkUpdate({
                             let oradio = ooption.querySelector('input[type=radio]');
                             if (answer_tmp === ooption.innerText) {
                                 oradio.click();
+                                break;
+                            }
+                        }
+                    else if (otopic.querySelector('span'))
+                        for (let i = 0; ooption = await otopic.querySelectorAll('span > .selectable')[i]; i++) {
+                            if (!ooption || ooption.innerText == "...") continue;
+                            if (answer_tmp === ooption.innerText) {
+                                ooption.click();
                                 break;
                             }
                         }
