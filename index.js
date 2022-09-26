@@ -307,7 +307,7 @@ checkUpdate({
                             question: answering[caze].question,
                             answer: answering[caze].answer[0]
                         });
-                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[32m ✔ \x1b[0m| ');
+                        answerlist.push('\x1b[0m' + caze + '\x1b[0m\x1b[32m ✔ \x1b[0m|');
                         //answerlist.push(caze + ':✔' + answering[caze].answer[0].split(" ", 1));
                         correct_count++;
                     } else if (ques.title === 'Incorrect') {
@@ -347,12 +347,10 @@ checkUpdate({
                 output += result;
             });
             console.log(output);
-            fs.writeFileSync('./correct.json', JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-            fs.writeFileSync('./wrong.json', JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-            fs.mkdir('./' + ID, { recursive: true }, (err) => {
+            fs.mkdir('./recent', { recursive: true }, (err) => {
                 if (err) throw err;
-                fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-                fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                fs.writeFileSync(`./recent/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                fs.writeFileSync(`./recent/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
             });
             if (allCorrectTimes > 0) {
                 fs.mkdir('./' + ID, { recursive: true }, (err) => {
@@ -369,14 +367,6 @@ checkUpdate({
                 console.log("||");
                 console.log("||**********************************************************************************************");
                 await page.waitForTimeout(1000 * 86400);
-            }
-            if (times > 10000) {
-                fs.mkdir('./' + ID, { recursive: true }, (err) => {
-                    if (err) throw err;
-                    fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-                    fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-                });
-                //await page.waitForTimeout(1000 * 86400);
             }
             return await tryAnswerFn();
         }

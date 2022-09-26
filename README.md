@@ -1,6 +1,6 @@
 # 水沙連語言學習網自動作答程式
 
-[![下載](https://github.com/micr0dust/image_saves/raw/master/img/button/btn-dl-black-ch.png?raw=true "下載")](https://github.com/micr0dust/NCNU-SDG-auto-complete/releases/download/v2.1.1/NCNU-SDG-auto-complete.zip)
+[![下載](https://github.com/micr0dust/image_saves/raw/master/img/button/btn-dl-black-ch.png?raw=true "下載")](https://github.com/micr0dust/NCNU-SDG-auto-complete/releases/download/v2.4.1/NCNU-SDG-auto-complete.zip)
 
 ## 如何使用
 
