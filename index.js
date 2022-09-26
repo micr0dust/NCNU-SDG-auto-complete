@@ -4,6 +4,7 @@ const pkg = require('./package.json');
 const fs = require('fs');
 const util = require('util');
 const readline = require('readline');
+const getDirName = require('path').dirname;
 const { resolve } = require('path');
 const { rejects } = require('assert');
 // var log_file_err = fs.createWriteStream(__dirname + '/error.log', { flags: 'a' });
@@ -80,6 +81,7 @@ checkUpdate({
         const USER = await getInput('學號：');
         const PASSWORD = await getInput('\x1b[0mMoodle密碼：\x1b[30m');
         const TARGET = await getInput('\x1b[0m目標網址：');
+        const ID = TARGET.split('?')[1].split('=')[1];
         let correct = [{
             question: '',
             answer: ''
@@ -120,6 +122,7 @@ checkUpdate({
                 console.log("\x1b[33m連線失敗，可能是網址錯誤\x1b[0m\n");
                 console.log(error);
             }
+
             try {
                 await page.waitForSelector('#region-main > div:nth-child(3) > div.box.py-3.quizattempt > div > form > button');
                 await page.evaluate(async() => {
@@ -147,7 +150,9 @@ checkUpdate({
                 await page.click('#mod_quiz-next-nav');
                 try {
                     await page.waitForNavigation();
-                } catch (error) {}
+                } catch (error) {
+                    console.log(error);
+                }
             }
 
             async function answerFn(num) {
@@ -173,7 +178,8 @@ checkUpdate({
                     let reading = {
                         question: oquestion,
                         answer: []
-                    }
+                    };
+
                     if (otopic.querySelector('span > .select'))
                         for (let i = 0; ooption = await otopic.querySelectorAll('span > .select > option')[i]; i++) {
                             if (!ooption || isNaN(parseInt(ooption.value, 10))) continue;
@@ -181,6 +187,8 @@ checkUpdate({
                         }
                     else if (otopic.querySelector('div.ablock > div.answer'))
                         for (let i = 1; ooption = await otopic.querySelector('div.ablock > div.answer > div:nth-child(' + i + ')'); i++) {
+                            const check = await ooption.querySelector('div > span');
+                            if (check) check.remove();
                             reading.answer.push(ooption.innerText);
                         }
                     else if (otopic.querySelector('span'))
@@ -291,7 +299,7 @@ checkUpdate({
                         for (let j = 0; j < wrong.length; j++) {
                             if (wrong[j] && wrong[j].question && (wrong[j].question === answering[caze].question)) {
                                 arrLocation = true;
-                                if (wrong[j].answer.indexOf(answering[caze].answer[0]) + 1);
+                                if (~(wrong[j].answer.indexOf(answering[caze].answer[0])));
                                 else {
                                     if (!(answering[caze].answer[0])) break;
                                     wrong[j].answer.push(answering[caze].answer[0]);
@@ -311,6 +319,7 @@ checkUpdate({
                 //console.log(answering, correct, wrong);
                 return [correct, wrong, correct_count, viewed, answerlist];
             }, answering, correct, wrong);
+            //console.log(answering);
             correct = res[0];
             wrong = res[1];
             let viewed = res[3];
@@ -323,24 +332,35 @@ checkUpdate({
                 output += result;
             });
             console.log(output);
-            fs.writeFileSync('./correct.json', JSON.stringify(correct));
-            fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
+            fs.writeFileSync('./correct.json', JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+            fs.writeFileSync('./wrong.json', JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+            fs.mkdir('./' + ID, { recursive: true }, (err) => {
+                if (err) throw err;
+                fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+            });
             if (allCorrectTimes > 0) {
-                fs.writeFileSync('./correct.json', JSON.stringify(correct));
-                fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
+                fs.mkdir('./' + ID, { recursive: true }, (err) => {
+                    if (err) throw err;
+                    fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                    fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                });
                 await browser.close();
                 console.log("\n\n||**********************************************************************************************");
                 console.log("||");
                 console.log("||    程式執行結束，你可以去 " + TARGET + " 察看真實結果");
                 console.log("||");
-                console.log("||    已將答案輸出成 \x1b[32mcorrect.json\x1b[30m、錯誤題目輸出成 \x1b[31mwrong.json\x1b[30m，可以至資料夾中查看");
+                console.log(`||    已將答案輸出在 \x1b[32m/${ID}/correct.json\x1b[0m、錯誤題目輸出在 \x1b[31m/${ID}/wrong.json\x1b[0m，可以至資料夾中查看`);
                 console.log("||");
                 console.log("||**********************************************************************************************");
                 await page.waitForTimeout(1000 * 86400);
             }
             if (times > 10000) {
-                fs.writeFileSync('./correct.json', JSON.stringify(correct));
-                fs.writeFileSync('./wrong.json', JSON.stringify(wrong));
+                fs.mkdir('./' + ID, { recursive: true }, (err) => {
+                    if (err) throw err;
+                    fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                    fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                });
                 //await page.waitForTimeout(1000 * 86400);
             }
             return await tryAnswerFn();
