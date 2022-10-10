@@ -81,6 +81,7 @@ checkUpdate({
         const USER = await getInput('學號：');
         const PASSWORD = await getInput('\x1b[0mMoodle密碼：\x1b[30m');
         const TARGET = await getInput('\x1b[0m目標網址：');
+        const LOG = (await getInput('額外輸出答案？(預設否/y)：')) === "y";
         const ID = TARGET.split('?')[1].split('=')[1];
         let correct = [{
             question: '',
@@ -171,7 +172,8 @@ checkUpdate({
                     if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > h3 > strong');
                     if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div');
                     if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext');
-                    if (!oquestion1 && otopic.querySelector('p')) oquestion1 = otopic.querySelector('p').childNodes[0];
+                    const quesStr = otopic.querySelectorAll('p');
+                    if (!oquestion1 && quesStr) oquestion1 = quesStr[quesStr.length - 1].childNodes[0];
                     if (!oquestion1) return false;
                     oquestion = oquestion1.textContent.trim();
                     const oquestion2 = otopic.querySelector('p');
@@ -353,17 +355,18 @@ checkUpdate({
                 fs.writeFileSync(`./recent/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
             });
             if (allCorrectTimes > 0) {
-                fs.mkdir('./' + ID, { recursive: true }, (err) => {
-                    if (err) throw err;
-                    fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-                    fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
-                });
+                if (LOG)
+                    fs.mkdir('./' + ID, { recursive: true }, (err) => {
+                        if (err) throw err;
+                        fs.writeFileSync(`./${ID}/correct.json`, JSON.stringify(correct, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                        fs.writeFileSync(`./${ID}/wrong.json`, JSON.stringify(wrong, null, '  ').replace(/: "(?:[^"]+|\\")*",?$/gm, ' $&'));
+                    });
                 await browser.close();
                 console.log("\n\n||**********************************************************************************************");
                 console.log("||");
                 console.log("||    程式執行結束，你可以去 " + TARGET + " 察看真實結果");
                 console.log("||");
-                console.log(`||    已將答案輸出在 \x1b[32m/${ID}/correct.json\x1b[0m、錯誤題目輸出在 \x1b[31m/${ID}/wrong.json\x1b[0m，可以至資料夾中查看`);
+                console.log(`||    已將答案輸出在 \x1b[32m/${LOG?ID:"recent"}/correct.json\x1b[0m、錯誤題目輸出在 \x1b[31m/${LOG?ID:"recent"}/wrong.json\x1b[0m，可以至資料夾中查看`);
                 console.log("||");
                 console.log("||**********************************************************************************************");
                 await page.waitForTimeout(1000 * 86400);
