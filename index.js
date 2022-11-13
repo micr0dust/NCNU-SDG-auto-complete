@@ -164,10 +164,12 @@ checkUpdate({
                     const otopic = document.querySelector('#responseform > div > div:nth-child(' + num + ') > div.content > div');
                     let oquestion1 = otopic.querySelector('div.qtext > p');
                     const listen = otopic.querySelector('div > div > div > audio');
+                    const video = otopic.querySelector('div.qtext > div > div > div > video');
                     let oquestion;
                     let ooption;
                     let answer_tmp;
                     //read #responseform > div > div:nth-child(2) > div.content > div > div.qtext > h3
+                    if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div > p');
                     if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div > p');
                     if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > h3 > strong');
                     if (!oquestion1) oquestion1 = otopic.querySelector('div.qtext > div');
@@ -179,6 +181,7 @@ checkUpdate({
                     const oquestion2 = otopic.querySelector('p');
                     if (oquestion2 && oquestion2.childNodes[2]) oquestion = oquestion + "___" + oquestion2.childNodes[2].textContent.trim();
                     if (listen) oquestion += listen.title;
+                    if (video) oquestion += video.title;
                     let reading = {
                         question: oquestion,
                         answer: []
