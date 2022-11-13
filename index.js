@@ -178,7 +178,7 @@ checkUpdate({
                     oquestion = oquestion1.textContent.trim();
                     const oquestion2 = otopic.querySelector('p');
                     if (oquestion2 && oquestion2.childNodes[2]) oquestion = oquestion + "___" + oquestion2.childNodes[2].textContent.trim();
-                    if (listen) oquestion = listen.title;
+                    if (listen) oquestion += listen.title;
                     let reading = {
                         question: oquestion,
                         answer: []
