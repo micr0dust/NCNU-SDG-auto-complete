@@ -1,5 +1,7 @@
 # 水沙連語言學習網自動作答程式
 
+## (不再維護，我已修完英文)
+
 [![下載](https://github.com/micr0dust/image_saves/raw/master/img/button/btn-dl-black-ch.png?raw=true "下載")](https://github.com/micr0dust/NCNU-SDG-auto-complete/releases/download/v2.5.2/NCNU-SDG-auto-complete.zip)
 
 ## 如何使用
